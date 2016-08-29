@@ -1,0 +1,166 @@
+{% load custom_extras %}
+<meta charset="UTF-8">
+<style type="text/css">
+    .text-red {
+        color: red;
+    }
+
+    .dm-table {
+        max-width: 100%;
+        background-color: transparent;
+        border-spacing: 0;
+        border-bottom: 1px solid #000;
+        border-right: 1px solid #000;
+        border-collapse: separate;
+        border-left: 0;
+        width: 900px;
+        margin-bottom: 15px;
+        font-family: Helvetica, sans-serif;
+        font-size: 16px;
+    }
+
+    .dm-table th {
+        background-color: rgb(153, 203, 255);
+        text-align: center;
+        font-size: 32px;
+        font-weight: 700;
+        vertical-align: middle;
+        height: 80px;
+        border-top: 1px solid #000;
+        border-left: 1px solid #000;
+    }
+
+    .dm-table td {
+        border-left: 1px solid #000;
+        text-align: left;
+        border-top: 1px solid #000;
+        word-break: break-all;
+        padding: 6px;
+        color: #333;
+    }
+
+    .dm-table .td-head {
+        width: 12%;
+        font-size: 20px;
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    .dm-table .td-subhead {
+        width: 12%;
+    }
+
+    .dm-table .td-content {
+        padding: 15px 5px;
+        line-height: 1.5;
+        color: #000;
+        font-size: 14px;
+    }
+
+    .dm-table .td-content li {
+        list-style-type: decimal;
+    }
+
+    .dm-signature {
+        margin: 10px;
+        font-size: 12px;
+        color: #808080;
+        line-height: 1.5;
+        font-family: '黑体';
+    }
+
+    .dm-signature .company {
+        color: rgb(255, 102, 0);
+        font-size: 20px;
+        font-weight: bold
+    }
+
+    .dm-signature .info {
+        line-height: 20px;
+        margin: 20px 0;
+    }
+</style>
+<table class="dm-table">
+    <thead>
+    <tr>
+        <th colspan="3">{{ meeting.topic }}</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="td-head">会议时间</td>
+        <td colspan="2">{{ meeting.created_time|date:'Y-m-d 09:30' }}</td>
+    </tr>
+    <tr>
+        <td class="td-head">会议地点</td>
+        <td colspan="2">工位</td>
+    </tr>
+    <tr>
+        <td class="td-head">主持人</td>
+        <td colspan="2">{{ meeting.master }}</td>
+    </tr>
+    <tr>
+        <td class="td-head">记录人</td>
+        <td colspan="2">{{ meeting.noter }}</td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="td-head">参会人员</td>
+        <td colspan="2">标<span class="text-red"> 红 </span>为下一次记录人</td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            {% for userp in menber %}
+                {% if userp.id == duty.id %}
+                    <span class="text-red">{{ userp.username }}</span>
+                    {% if not forloop.last %} > {% endif %}
+                {% else %}
+                    {{ userp.username }}
+                    {% if not forloop.last %} > {% endif %}
+                {% endif %}
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td rowspan="2" class="td-head">里程碑</td>
+        <td class="td-subhead">里程碑</td>
+        <td>{{ meeting.milestone1 }}&nbsp;&nbsp;&nbsp;&nbsp;时间：{{ meeting.milestonedate1|date:'Y-m-d' }}</td>
+    </tr>
+    <tr>
+        <td class="td-subhead">下一里程碑</td>
+        <td>{{ meeting.milestone2 }}&nbsp;&nbsp;&nbsp;&nbsp;时间：{{ meeting.milestonedate2|date:'Y-m-d' }}</td>
+    </tr>
+    <tr>
+        <td rowspan="{{ reports|length |add:1 }}" class="td-head">内容简述</td>
+        <td class="td-subhead" style="background: rgb(197, 231, 173)">姓名</td>
+        <td style="background: rgb(197, 231, 173)">今天主要工作</td>
+    </tr>
+    {% for report in reports %}
+        <tr>
+            <td class="td-subhead">{{ report.username }}</td>
+            {% if report.content == "leave" %}
+                <td class="td-content">leave</td>
+            {% else %}
+                <td class="td-content">{{ report.content|user_report|safe }}</td>
+            {% endif %}
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<hr color="#b5c4df" size="1" width="900px" align="left"/>
+<div class="dm-signature">
+    <div class="company">
+        <div>{{ userprofile.company.name }}</div>
+        <div>{{ userprofile.company.name_ext }}</div>
+    </div>
+    <div class="info">
+        <div><Strong>{{ userprofile.position }}/{{ userprofile.departments }}</Strong></div>
+        <div><Strong>{{ userprofile.name }}</Strong></div>
+        <div><Strong>mobile</Strong>：{{ userprofile.mobile }}</div>
+        <div><Strong>email</Strong>：{{ userprofile.user.email }}</div>
+        <div><Strong>company</Strong>：{{ userprofile.company.url }}</div>
+        <div><Strong>company tel</Strong>：{{ userprofile.company.mobile }}</div>
+        <div><Strong>company address</Strong>：{{ userprofile.company.address }}</div>
+    </div>
+    <div style="color: rgb(255, 102, 0);">{{ userprofile.company.mission }}</div>
+    <div><img src="cid:email_sign" border="0"/></div>
+</div>

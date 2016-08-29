@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Meeting Reports{% endblock %}
+{% load staticfiles %}
+{% load custom_extras %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/meetings.css' %}">
+    <ul class="list-group">
+        <p>共找到{{ count }}条记录，最近10条：</p>
+        {% for meetingeach in meeting %}
+            <a class="list-group-item" href="/meeting-reports/{{ meetingeach.id }}">
+                <span class="badge">{{ meetingeach.noter }}</span>
+                {{ meetingeach.topic }}
+            </a>
+        {% endfor %}
+    </ul>
+{% endblock %}

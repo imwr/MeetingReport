@@ -1,0 +1,111 @@
+.bg-white {
+    background: white !important;
+}
+
+.text-red {
+    color: red;
+}
+
+.border-red {
+    border: 1px solid red;
+}
+
+.padding-v12 {
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+}
+
+textarea {
+    resize: none;
+}
+
+.dm-message {
+    position: fixed;
+    top: 0;
+    text-align: center;
+    height: 0;
+    opacity: 0;
+    line-height: 50px;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.dm-message.open {
+    height: 50px;
+    opacity: 1;
+    top: 50px;
+}
+
+.dm-table {
+    background-color: transparent;
+    border-spacing: 0;
+    border-bottom: 1px solid #000;
+    border-right: 1px solid #000;
+    border-collapse: separate;
+    border-left: 0;
+    width: 100%;
+    margin-bottom: 15px;
+    font-family: Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+.dm-table th {
+    background-color: rgb(153, 203, 255);
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    vertical-align: middle;
+    height: 80px;
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+}
+
+.dm-table td {
+    border-left: 1px solid #000;
+    text-align: left;
+    border-top: 1px solid #000;
+    word-break: break-all;
+    padding: 6px;
+    color: #333;
+}
+
+.dm-table .td-head {
+    width: 12%;
+    font-size: 20px;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.dm-table .td-subhead {
+    width: 12%;
+}
+
+.dm-table .td-content {
+    padding: 15px 5px;
+    line-height: 1.5;
+    color: #000;
+    font-size: 14px;
+}
+
+.dm-table .td-content li {
+    list-style-type: decimal;
+}
+
+.dm-signature {
+    margin: 10px;
+    font-size: 12px;
+    color: #808080;
+    line-height: 1.5;
+    font-family: '黑体';
+}
+
+.dm-signature .company {
+    color: rgb(255, 102, 0);
+    font-size: 20px;
+    font-weight: bold
+}
+
+.dm-signature .info {
+    line-height: 20px;
+    margin: 20px 0;
+}

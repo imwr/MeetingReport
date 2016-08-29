@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% block title %}Meeting Reports{% endblock %}
+{% load staticfiles %}
+{% load custom_extras %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/meetings.css' %}">
+    <div class="dm-message bg-primary" id="message">
+        <div class="container row">message</div>
+    </div>
+    {% if error %}
+        <div class="jumbotron">
+            <h1>{{ error }}</h1>
+            <p>点击右上角姓名</p>
+        </div>
+    {% else %}
+        <form class="well form-horizontal">
+            <div class="form-group">
+                <label for="relist" class="col-sm-1 control-label">收件人</label>
+                <div class="col-sm-11">
+                <textarea type="text" readonly class="form-control bg-white" placeholder="收件人"
+                          id="relist">
+                    {% if emails.email %}
+                        {{ userprofile.group.name }}<{{ emails.email }}>,
+                    {% elif emails.contain_menber %}
+                        {{ menber|user_email }},
+                    {% endif %}
+                    {{ emails.relist.all|user_email }}
+                </textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="cclist" class="col-sm-1 control-label">抄送</label>
+                <div class="col-sm-11">
+                <textarea type="text" readonly class="form-control bg-white" placeholder="无" id="cclist"
+                          rows="1">{{ emails.cclist.all|user_email }}
+                </textarea>
+                </div>
+            </div>
+            <script>
+                $('textarea').each(function () {
+                    this.value = this.value.replace(/\s/g, "").replace(/,/g, ", ")
+                    var h = Math.floor(this.scrollHeight / 34) * 34
+                    this.style.cssText = 'height:' + (h < 34 ? 34 : h) + 'px';
+                })
+            </script>
+            <div class="form-group">
+                <label for="topic" class="col-sm-1 control-label">主题</label>
+                <div class="col-sm-11">
+                    <input type="text" readonly class="form-control bg-white" placeholder="主题" id="topic"
+                           value="{{ userprofile.departments }}_{{ userprofile.group.name }}_MeetingReport_{% now "Ymd" %}"/>
+                </div>
+            </div>
+        </form>
+        <form id="form" class="form-horizontal">
+            {% csrf_token %}
+            <table class="dm-table">
+                <thead>
+                <tr>
+                    <th colspan="3">
+                        {{ userprofile.departments }}_{{ userprofile.group.name }}_MeetingReport_{% now "Ymd" %}
+                        <input value="{{ userprofile.departments }}_{{ userprofile.group.name }}_MeetingReport_{% now "Ymd" %}"
+                               type="hidden" name="topic"/>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="td-head">会议时间</td>
+                    <td colspan="2">{% now "Y-m-d 09:30" %}</td>
+                </tr>
+                <tr>
+                    <td class="td-head">会议地点</td>
+                    <td colspan="2">工位</td>
+                </tr>
+                <tr>
+                    <td class="td-head">主持人</td>
+                    <td colspan="2">{{ userprofile.group.ower }}</td>
+                </tr>
+                <tr>
+                    <td class="td-head">记录人</td>
+                    <td colspan="2">
+                        <span>{{ duty.username }}</span>
+                        <input id="duty" name="duty" type="hidden" data-duty="{{ duty.id }}"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" class="td-head">参会人员</td>
+                    <td colspan="2">标<span class="text-red"> 红 </span>为下一次记录人</td>
+                </tr>
+                <tr>
+                    <td colspan="2" id="menbers">
+                        {% for userp in menber %}
+                            {% if userp.id == duty.id %}
+                                <span class="text-red" data-user="{{ userp.id }}"
+                                      data-leave="false">{{ userp.username }}</span>
+                                {% if not forloop.last %} > {% endif %}
+                            {% else %}
+                                <span data-user="{{ userp.id }}" data-leave="false">{{ userp.username }}</span>
+                                {% if not forloop.last %} > {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="2" class="td-head">里程碑</td>
+                    <td class="td-subhead">里程碑</td>
+                    <td>
+                        {% if meeting.milestonedate1|timesince >= "1 min" %}
+                            {% set milestonedate1 = 'True' %}
+                        {% endif %}
+                        <input type="text" class="col-md-4 {% if milestonedate1 %} text-red {% endif %}" id="milestone1"
+                               value="{{ meeting.milestone1 }}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                        时间：<input type="datetime-local" class="{% if milestonedate1 %} text-red {% endif %}"
+                                  id="milestonedate1" value="{{ meeting.milestonedate1|date:'Y-m-d\T00:00' }}"/>
+                        {# i:s#}
+                        {% if milestonedate1 %}
+                            <span class="text-red">已过期</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-subhead">下一里程碑</td>
+                    <td>
+                        {% if meeting.milestonedate2|timesince >= "1 min" %}
+                            {% set milestonedate2 = 'True' %}
+                        {% endif %}
+                        <input type="text" class="col-md-4 {% if milestonedate2 %} text-red {% endif %}" id="milestone2"
+                               value="{{ meeting.milestone2 }}"/>&nbsp;&nbsp;&nbsp;&nbsp;
+                        时间：<input type="datetime-local" class="{% if milestonedate2 %} text-red {% endif %}"
+                                  id="milestonedate2" value="{{ meeting.milestonedate2|date:'Y-m-d\T00:00' }}"/>
+                        {% if milestonedate2 %}
+                            <span class="text-red">已过期</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td rowspan="{{ menber|length |add:1 }}" class="td-head">内容简述</td>
+                    <td class="td-subhead" style="background: rgb(197, 231, 173)">姓名</td>
+                    <td style="background: rgb(197, 231, 173)">今天主要工作</td>
+                </tr>
+                {% for userp in menber %}
+                    <tr>
+                        <td class="td-subhead">
+                            {{ userp.username }}
+                            <h6>
+                                <label class="text-info">
+                                    <input type="checkbox" class="leave-box" data-user="{{ userp.id }}"
+                                           id="leave-{{ userp.id }}"/>
+                                    &nbsp;&nbsp;leave
+                                </label>
+                            </h6>
+                        </td>
+                        <td class="td-content">
+                        <textarea class="autoheigth form-control padding-v12" data-userid="{{ userp.id }}"
+                                  data-username="{{ userp }}" id="report-{{ userp.id }}"></textarea>
+                            {% if meeting %}
+                                <a class="btn-sm input-last" data-meeting="{{ meeting.id }}" style="cursor: pointer;"
+                                   data-user="{{ userp.id }}">填入上次早会内容</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <hr color="#b5c4df" size="1" width="100%"/>
+            <div class="dm-signature">
+                <div class="company">
+                    <div>{{ userprofile.company.name }}</div>
+                    <div>{{ userprofile.company.name_ext }}</div>
+                </div>
+                <div class="info">
+                    <div><Strong>{{ userprofile.position }}/{{ userprofile.departments }}</Strong></div>
+                    <div><Strong>{{ userprofile.user.username }}</Strong></div>
+                    <div><Strong>mobile</Strong>：{{ userprofile.mobile }}</div>
+                    <div><Strong>email</Strong>：{{ userprofile.user.email }}</div>
+                    <div><Strong>company</Strong>：{{ userprofile.company.url }}</div>
+                    <div><Strong>company tel</Strong>：{{ userprofile.company.mobile }}</div>
+                    <div><Strong>company address</Strong>：{{ userprofile.company.address }}</div>
+                </div>
+                <div style="color: rgb(255, 102, 0);">{{ userprofile.company.mission }}</div>
+                <div><img src="{% static 'img/test.png' %}" border="0"/></div>
+            </div>
+        </form>
+        <br/><br/><br/><br/>
+        <nav class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container col-md-12">
+                <span class="col-md-5"></span>
+                {% if todayhavereport == 1 %}
+                    <span class="btn navbar-btn col-md-2 text-danger">You have sent report today~</span>
+                {% else %}
+                    <button type="button" class="btn btn-primary navbar-btn col-md-2" id="send_email">Send</button>
+                {% endif %}
+                <span class="col-md-5"></span>
+            </div>
+        </nav>
+        <script type="text/javascript" src="{% static 'js/meetings.js' %}"></script>
+    {% endif %}
+{% endblock %}
