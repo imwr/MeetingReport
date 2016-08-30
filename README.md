@@ -2,7 +2,7 @@
 每天早会记录邮件发送例子，仅供学习测试Python+Django，可能有不合理之处，如有疑惑请查阅相关技术文档。
 
 ## 特点
-* 支持注册、登录（支持用户名、邮箱登录，参见 `EmailBackend.py`）
+* 注册、登录（支持用户名、邮箱登录，参见 `EmailBackend.py`）
 * 自定义Tag和Filter（`MeetingReports/templatetags/custom_extras.py`）
 * 发送邮件+邮件详情+邮件历史
 * 邮件支持HTML模板，并带文字+图片签名
@@ -19,15 +19,17 @@
 ```
 # Send Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.emailhost.com'
-EMAIL_HOST_USER = 'youremail@emailhost.com'
+EMAIL_HOST = 'smtp.email_host.com'
+EMAIL_HOST_USER = 'youre_mail@email_host.com'
 EMAIL_PORT = 465
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'your_password'
 EMAIL_USE_SSL = True
 ```
-* 登录后台，超级用户：`wr`，密码：`zaq1xsw2`（其他用户密码相同）
-* 访问`/admin/MeetingReports/emails/`，更新收件人、抄送列表数据
-* 直接访问首页
+* 使用超级用户登录后台，帐号：`wr`，密码：`zaq1xsw2`（其他用户密码相同）
+* 访问`/admin/MeetingReports/emails/`，更新Trade组邮件收件人、抄送列表数据
+* 访问`/admin/MeetingReports/userprofile/`，更新组员邮箱地址
+* 访问`/admin/MeetingReports/company/`，更新公司信息（可选）
+* 访问首页，按需修改
 
 ## 截图
 ![image](static/img/screenshot.png)

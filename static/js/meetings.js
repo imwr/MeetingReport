@@ -11,14 +11,14 @@ function getCookie(c_name) {
     return "";
 }
 var messageTimeout = null;
-function showmsg(msg, callback) {
+function showmsg(msg, callback, time) {
     $("#send_email").removeAttr("disabled");
     clearTimeout(messageTimeout)
     var message = $("#message").addClass("open").find("div").html(msg || "Error").end()
     messageTimeout = setTimeout(function () {
         message.removeClass("open")
         callback && callback()
-    }, 3000)
+    }, time || 3000)
 }
 $(function () {
     $.ajaxSetup({
@@ -93,7 +93,7 @@ $(function () {
                 });
             },
             error: function (data) {
-                showmsg(data.responseText);
+                showmsg(data.responseText, null, 10000);
             }
         })
     })
@@ -114,7 +114,11 @@ $(function () {
     $(".input-last").on("click", function () {// 获取上次早会内容
         var textarea = $(this).prev(), that = $(this);
         if (textarea.attr("disabled") == "disabled") return
-        if (that.attr("data-content")) {
+        var content = that.attr("data-content");
+        if (content) {
+            if (content == 'leave') {
+                return textarea.attr('placeholder', content)
+            }
             return textarea.val($(this).attr("data-content").split(",").join("\n")).trigger("input");
         }
         var user = that.attr("data-user"),
@@ -127,8 +131,11 @@ $(function () {
             url: "/meeting-reports/get_last_userreport?userid=" + user + "&meetingid=" + meeting + "&csrfmiddlewaretoken=" + csrfmiddlewaretoken,
             type: "GET",
             success: function (data) {
-                textarea.val((data + "").split(",").join("\n")).trigger("input");
                 that.attr("data-content", data)
+                if (data == 'leave') {
+                    return textarea.attr('placeholder', data)
+                }
+                textarea.val((data + "").split(",").join("\n")).trigger("input");
             },
             error: function (data) {
                 showmsg(data.responseText)

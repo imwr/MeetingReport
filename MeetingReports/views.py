@@ -68,7 +68,7 @@ def get_last_userreport(request):
     if not user or not meeting:
         return HttpResponse("")
     report = Reports.objects.get(meeting_id=meeting, user_id=user)
-    return HttpResponse("" if report.leave else report.content)
+    return HttpResponse(report.content)
 
 
 class MeetingDetailView(DetailView):
@@ -119,7 +119,7 @@ class SendEmail(View):
 
         # save meeting
         today = datetime.datetime.today()
-        subject = userprofile.departments + '_' + userprofile.group.name + '_早会纪要_' + today.strftime('%Y%m%d')
+        subject = userprofile.departments + '_' + userprofile.group.name + '_MeetingReport_' + today.strftime('%Y%m%d')
 
         master = userprofile.group.ower
         if request.GET.get("duty"):
@@ -150,7 +150,7 @@ class SendEmail(View):
         # save report
         for value in reports:
             report = Reports(user_id=value.get('user_id'), meeting_id=meeting.id, content=value.get('content'),
-                             leave=(value.get('content') == '请假'))
+                             leave=(value.get('content') == 'leave'))
             report.save()
 
         # change next user duty
@@ -181,6 +181,7 @@ class SendEmail(View):
                     ccemails.append(user.email)
             msg = EmailMultiAlternatives(subject=subject, body=html_content, from_email=settings.EMAIL_HOST_USER,
                                          to=toemails, cc=ccemails)
+            # 图片签名（非附件）
             img_data = open('static/img/test.png', 'rb').read()
             html_part = MIMEMultipart(_subtype='related')
             body = MIMEText('', _subtype='html')

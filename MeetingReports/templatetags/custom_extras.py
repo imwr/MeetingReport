@@ -35,4 +35,6 @@ def user_email(users):
 
 @register.filter
 def user_report(content):
+    if content == "leave":
+        return '<span style="color:gray">leave</span>'
     return "<li>" + "</li><li>".join(content.split(",")) + "</li>"

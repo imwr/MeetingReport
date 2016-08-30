@@ -129,11 +129,11 @@ STATIC_URL = '/static/'
 
 # Send Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.emailhost.com'
-EMAIL_HOST_USER = 'youremail@emailhost.com'
-EMAIL_PORT = 465
-EMAIL_HOST_PASSWORD = ''
-EMAIL_USE_SSL = True
+EMAIL_HOST = 'smtp.email_host.com'
+EMAIL_HOST_USER = 'your_email@email_host.com'
+EMAIL_PORT = 25
+EMAIL_HOST_PASSWORD = 'your_pwd'
+EMAIL_USE_SSL = False
 
 # LOGIN
 AUTH_PROFILE_MODULE = 'MeetingReports_Project.UserProfile'
