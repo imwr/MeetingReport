@@ -20,16 +20,17 @@
 # Send Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.email_host.com'
-EMAIL_HOST_USER = 'youre_mail@email_host.com'
-EMAIL_PORT = 465
-EMAIL_HOST_PASSWORD = 'your_password'
-EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'your_email@email_host.com'
+EMAIL_PORT = 25
+EMAIL_HOST_PASSWORD = 'your_pwd'
+EMAIL_USE_SSL = False
 ```
-* 使用超级用户登录后台，帐号：`wr`，密码：`zaq1xsw2`（其他用户密码相同）
+* 启动服务`python manage.py runserver`
+* 使用超级用户登录后台 `localhost:8000/admin`，帐号：`wr`，密码：`zaq1xsw2`（其他用户密码相同）
 * 访问`/admin/MeetingReports/emails/`，更新Trade组邮件收件人、抄送列表数据
 * 访问`/admin/MeetingReports/userprofile/`，更新组员邮箱地址
 * 访问`/admin/MeetingReports/company/`，更新公司信息（可选）
-* 访问首页，按需修改
+* 访问首页 `localhost:8000`，按需修改
 
 ## 截图
 ![image](static/img/screenshot.png)
